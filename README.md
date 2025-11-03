@@ -10,12 +10,12 @@ Your mission: defeat the shadow enemies, restore the silenced lands, and step th
 
 ## Game Description
 
-**Ballad of the Sacred Strings** is a 2D rhythm-action platformer where music becomes your weapon. As a heroic bard, you wield a magical guitar that fires musical notes at enemies. Master the art of sequence matching to unleash devastating beam attacks, explore a beautifully layered fantasy world, and bring harmony back to the land.
+**Ballad of the Sacred Strings** is a 2D rhythm-action fantasy platformer where music becomes your weapon. As a heroic bard, you wield a magical guitar that fires musical notes at enemies. Master the art of sequence matching to unleash devastating beam attacks, explore a beautifully layered fantasy world, and bring harmony back to the land.
 
 ## Core Gameplay Concepts
 
 ### Musical Combat System
-- **Note Attacks**: Fire individual musical notes (Q/W/E/R keys) that appear as floating song notes
+- **Note Attacks**: Fire individual musical notes (1/2/3/4 keys) that appear as floating song notes
 - **Sequence Matching**: Match a randomly generated 4-note sequence to unlock your ultimate ability
 - **Song Beam Attack**: After matching the sequence, press SPACE to unleash a continuous 2-second beam of 20 random notes
 - **Visual Guitar**: Your guitar appears beside you during attacks and orbits around you during beam attacks
@@ -40,21 +40,22 @@ Your mission: defeat the shadow enemies, restore the silenced lands, and step th
 
 ### Movement
 - `A` or `Left Arrow` - Move left
-- `D` or `Right Arrow` - Move right
+- `S` or `Right Arrow` - Move right
 - `W` or `Up Arrow` - Jump
+- `Space Bar` - Jump
 - Camera follows player with smooth tracking
 
 ### Guitar Playing
-- `Q` - Play Note 1 (fires random note sprite)
-- `W` - Play Note 2 (fires random note sprite)
-- `E` - Play Note 3 (fires random note sprite)
-- `R` - Play Note 4 (fires random note sprite)
-- `SPACE` - Unleash Song Beam (only after matching the sequence)
+- `1` - Play Note 1
+- `2` - Play Note 2
+- `3` - Play Note 3
+- `4` - Play Note 4
+- `E` - Unleash Song Beam (only after matching the sequence)
 
 ### Gameplay Flow
 1. Watch the HUD for the required 4-note sequence
-2. Play the notes in the correct order (Q/W/E/R)
-3. When sequence is matched, press SPACE to fire the beam attack
+2. Play the notes in the correct order (1/2/3/4)
+3. When sequence is matched, press E to fire the beam attack
 4. Your guitar orbits around you while firing 20 notes in 2 seconds
 5. Defeat all shadow enemies to spawn the portal
 6. Enter the portal to complete the level
@@ -73,7 +74,7 @@ Your mission: defeat the shadow enemies, restore the silenced lands, and step th
 - 🎯 **Projectile System**: Musical notes fly across the screen with physics-based movement
 - 🔄 **Orbital Guitar Animation**: Guitar spins and orbits during ultimate attack
 - 💥 **Damage Feedback**: Visual indicators when enemies take damage
-- 🎭 **Character Animations**: Idle, walk, and jump animations for the Hero 001 sprite
+- 🎭 **Character Animations**: Idle, walk, and jump animations for the Hero sprite
 
 ### Game Systems
 - 📊 **Complete HUD**: Health bar, energy meter, sequence display, and feedback messages

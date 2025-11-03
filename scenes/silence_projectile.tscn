@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3m8k2vp9tn5h"]
+
+[ext_resource type="Script" path="res://scripts/silence_projectile.gd" id="1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 15.0
+
+[node name="SilenceProjectile" type="Area2D"]
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Polygon2D" parent="."]
+color = Color(0.1, 0.1, 0.15, 0.9)
+polygon = PackedVector2Array(-15, 0, -7, -10, 0, -15, 7, -10, 15, 0, 7, 10, 0, 15, -7, 10)
+
+[node name="InnerCore" type="Polygon2D" parent="Sprite2D"]
+color = Color(0.05, 0.05, 0.1, 1)
+polygon = PackedVector2Array(-8, 0, -4, -5, 0, -8, 4, -5, 8, 0, 4, 5, 0, 8, -4, 5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 8
+lifetime = 1.0
+speed_scale = 0.8
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.1, 0.1, 0.15, 0.7)

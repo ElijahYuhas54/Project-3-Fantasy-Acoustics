@@ -1,0 +1,347 @@
+[gd_scene load_steps=11 format=3 uid="uid://cfj8k3p4vxr9t"]
+
+[ext_resource type="Script" path="res://scripts/parallax_bg.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://c5yv8nxq7vmn2" path="res://scenes/player.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://drxm4k7p5qw8v" path="res://scenes/silence_enemy.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://b8y4m5xz6nqw1" path="res://scenes/silenced_area.tscn" id="4"]
+
+[sub_resource type="Gradient" id="Gradient_sky"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.1, 0.05, 0.2, 1, 0.2, 0.1, 0.3, 1, 0.3, 0.2, 0.4, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_sky"]
+gradient = SubResource("Gradient_sky")
+width = 2048
+height = 1024
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health"]
+bg_color = Color(0.8, 0.2, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy"]
+bg_color = Color(0.3, 0.6, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
+texture_region_size = Vector2i(64, 64)
+
+[sub_resource type="TileSet" id="TileSet_1"]
+tile_size = Vector2i(64, 64)
+sources/0 = SubResource("TileSetAtlasSource_1")
+
+[node name="Main" type="Node2D"]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("1")
+
+[node name="ParallaxLayer1" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.1, 0.1)
+motion_mirroring = Vector2(2048, 0)
+
+[node name="DistantStars" type="CPUParticles2D" parent="ParallaxBackground/ParallaxLayer1"]
+position = Vector2(960, 400)
+amount = 100
+lifetime = 20.0
+preprocess = 10.0
+randomness = 0.3
+lifetime_randomness = 0.5
+emission_shape = 3
+emission_rect_extents = Vector2(1000, 500)
+direction = Vector2(0, 0)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 0.0
+initial_velocity_max = 0.0
+scale_amount_min = 2.0
+scale_amount_max = 5.0
+color = Color(1, 1, 0.8, 0.6)
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.3, 0.3)
+motion_mirroring = Vector2(1920, 0)
+
+[node name="MountainRange" type="Node2D" parent="ParallaxBackground/ParallaxLayer2"]
+
+[node name="Mountain1" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer2/MountainRange"]
+color = Color(0.15, 0.1, 0.25, 1)
+polygon = PackedVector2Array(-200, 800, 0, 200, 200, 400, 400, 300, 600, 800)
+
+[node name="Mountain2" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer2/MountainRange"]
+position = Vector2(500, 0)
+color = Color(0.12, 0.08, 0.22, 1)
+polygon = PackedVector2Array(-150, 800, 50, 250, 250, 350, 450, 250, 650, 800)
+
+[node name="Mountain3" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer2/MountainRange"]
+position = Vector2(1000, 0)
+color = Color(0.15, 0.1, 0.25, 1)
+polygon = PackedVector2Array(-100, 800, 100, 300, 300, 400, 500, 350, 700, 800)
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.6, 0.6)
+motion_mirroring = Vector2(1920, 0)
+
+[node name="Trees" type="Node2D" parent="ParallaxBackground/ParallaxLayer3"]
+
+[node name="Tree1" type="Node2D" parent="ParallaxBackground/ParallaxLayer3/Trees"]
+position = Vector2(200, 700)
+
+[node name="Trunk" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree1"]
+color = Color(0.2, 0.15, 0.1, 1)
+polygon = PackedVector2Array(-10, 0, -8, -80, 8, -80, 10, 0)
+
+[node name="Foliage" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree1"]
+color = Color(0.2, 0.3, 0.2, 1)
+polygon = PackedVector2Array(-40, -60, 0, -120, 40, -60)
+
+[node name="Tree2" type="Node2D" parent="ParallaxBackground/ParallaxLayer3/Trees"]
+position = Vector2(600, 720)
+
+[node name="Trunk" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree2"]
+color = Color(0.2, 0.15, 0.1, 1)
+polygon = PackedVector2Array(-12, 0, -10, -100, 10, -100, 12, 0)
+
+[node name="Foliage" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree2"]
+color = Color(0.18, 0.28, 0.18, 1)
+polygon = PackedVector2Array(-50, -80, 0, -140, 50, -80)
+
+[node name="Tree3" type="Node2D" parent="ParallaxBackground/ParallaxLayer3/Trees"]
+position = Vector2(1100, 710)
+
+[node name="Trunk" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree3"]
+color = Color(0.2, 0.15, 0.1, 1)
+polygon = PackedVector2Array(-10, 0, -8, -80, 8, -80, 10, 0)
+
+[node name="Foliage" type="Polygon2D" parent="ParallaxBackground/ParallaxLayer3/Trees/Tree3"]
+color = Color(0.2, 0.3, 0.2, 1)
+polygon = PackedVector2Array(-40, -60, 0, -120, 40, -60)
+
+[node name="Mist" type="CPUParticles2D" parent="ParallaxBackground/ParallaxLayer3"]
+position = Vector2(960, 650)
+amount = 20
+lifetime = 8.0
+preprocess = 4.0
+speed_scale = 0.3
+randomness = 0.5
+emission_shape = 3
+emission_rect_extents = Vector2(1000, 100)
+direction = Vector2(1, 0)
+spread = 20.0
+gravity = Vector2(0, -10)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 20.0
+scale_amount_max = 40.0
+color = Color(0.3, 0.25, 0.4, 0.3)
+
+[node name="Level" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Level"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="CollisionPolygon1" type="CollisionPolygon2D" parent="Level/Ground"]
+polygon = PackedVector2Array(-500, 800, 2500, 800, 2500, 900, -500, 900)
+
+[node name="Platform1" type="Polygon2D" parent="Level/Ground"]
+color = Color(0.25, 0.2, 0.3, 1)
+polygon = PackedVector2Array(-500, 800, 2500, 800, 2500, 900, -500, 900)
+
+[node name="GrassDetails" type="Node2D" parent="Level/Ground/Platform1"]
+
+[node name="Grass1" type="Line2D" parent="Level/Ground/Platform1/GrassDetails"]
+points = PackedVector2Array(100, 800, 105, 780, 110, 800)
+width = 2.0
+default_color = Color(0.3, 0.4, 0.3, 1)
+
+[node name="Grass2" type="Line2D" parent="Level/Ground/Platform1/GrassDetails"]
+points = PackedVector2Array(300, 800, 305, 775, 310, 800)
+width = 2.0
+default_color = Color(0.3, 0.4, 0.3, 1)
+
+[node name="Grass3" type="Line2D" parent="Level/Ground/Platform1/GrassDetails"]
+points = PackedVector2Array(500, 800, 505, 770, 510, 800)
+width = 2.0
+default_color = Color(0.3, 0.4, 0.3, 1)
+
+[node name="CollisionPolygon2" type="CollisionPolygon2D" parent="Level/Ground"]
+position = Vector2(700, 0)
+polygon = PackedVector2Array(-100, 690, 200, 690, 200, 740, -100, 740)
+
+[node name="Platform2" type="Polygon2D" parent="Level/Ground"]
+position = Vector2(700, 0)
+color = Color(0.25, 0.2, 0.3, 1)
+polygon = PackedVector2Array(-100, 690, 200, 690, 200, 740, -100, 740)
+
+[node name="CollisionPolygon3" type="CollisionPolygon2D" parent="Level/Ground"]
+position = Vector2(1100, 0)
+polygon = PackedVector2Array(-100, 580, 200, 580, 200, 630, -100, 630)
+
+[node name="Platform3" type="Polygon2D" parent="Level/Ground"]
+position = Vector2(1100, 0)
+color = Color(0.25, 0.2, 0.3, 1)
+polygon = PackedVector2Array(-100, 580, 200, 580, 200, 630, -100, 630)
+
+[node name="Ruins" type="Node2D" parent="Level"]
+position = Vector2(1600, 700)
+
+[node name="Pillar1" type="Polygon2D" parent="Level/Ruins"]
+color = Color(0.3, 0.3, 0.35, 1)
+polygon = PackedVector2Array(-30, 0, -25, -150, 25, -150, 30, 0)
+
+[node name="Pillar2" type="Polygon2D" parent="Level/Ruins"]
+position = Vector2(150, 0)
+color = Color(0.28, 0.28, 0.33, 1)
+polygon = PackedVector2Array(-30, 0, -25, -120, 25, -120, 30, 0)
+
+[node name="BrokenArch" type="Polygon2D" parent="Level/Ruins"]
+position = Vector2(75, -150)
+color = Color(0.32, 0.32, 0.37, 1)
+polygon = PackedVector2Array(-80, 0, -70, -30, 70, -30, 80, 0)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(200, 700)
+
+[node name="Enemy1" parent="." instance=ExtResource("3")]
+position = Vector2(900, 670)
+
+[node name="Enemy2" parent="." instance=ExtResource("3")]
+position = Vector2(1300, 560)
+
+[node name="SilencedArea1" parent="." instance=ExtResource("4")]
+position = Vector2(750, 600)
+
+[node name="SilencedArea2" parent="." instance=ExtResource("4")]
+position = Vector2(1150, 480)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HealthPanel" type="Panel" parent="UI/HUD"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 270.0
+offset_bottom = 90.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HealthPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 240.0
+offset_bottom = 60.0
+
+[node name="HealthLabel" type="Label" parent="UI/HUD/HealthPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 14
+text = "Health"
+
+[node name="HealthBar" type="ProgressBar" parent="UI/HUD/HealthPanel/VBoxContainer"]
+layout_mode = 2
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="EnergyLabel" type="Label" parent="UI/HUD/HealthPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Energy"
+
+[node name="EnergyBar" type="ProgressBar" parent="UI/HUD/HealthPanel/VBoxContainer"]
+layout_mode = 2
+max_value = 100.0
+show_percentage = false
+
+[node name="TitlePanel" type="Panel" parent="UI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 20.0
+offset_right = 250.0
+offset_bottom = 140.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/TitlePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="UI/TitlePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.8, 1)
+theme_override_font_sizes/font_size = 24
+text = "Ballad of the Sacred Strings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="UI/TitlePanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ControlsLabel" type="Label" parent="UI/TitlePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "WASD: Move  |  Space: Jump  |  1-4: Play Notes
+E: Restoration Spell (costs 20 energy)"
+horizontal_alignment = 1
+
+[node name="FeedbackLabel" type="Label" parent="UI"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 32
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="AmbientParticles" type="CPUParticles2D" parent="."]
+position = Vector2(960, 400)
+amount = 50
+lifetime = 15.0
+preprocess = 5.0
+randomness = 0.5
+lifetime_randomness = 0.3
+emission_shape = 3
+emission_rect_extents = Vector2(1000, 600)
+direction = Vector2(0, 1)
+spread = 30.0
+gravity = Vector2(0, 20)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 3.0
+scale_amount_max = 6.0
+color = Color(0.8, 0.8, 1, 0.3)

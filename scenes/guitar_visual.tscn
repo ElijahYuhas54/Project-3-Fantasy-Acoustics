@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://g1u2i3t4a5r6"]
+
+[node name="GuitarVisual" type="Node2D"]
+visible = false
+scale = Vector2(0.6, 0.6)
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.6, 0.3, 0.1, 1)
+polygon = PackedVector2Array(-15, -10, -18, 0, -18, 10, -15, 18, -10, 22, 10, 22, 15, 18, 18, 10, 18, 0, 15, -10, 10, -15, -10, -15)
+
+[node name="BodyOutline" type="Line2D" parent="."]
+points = PackedVector2Array(-15, -10, -18, 0, -18, 10, -15, 18, -10, 22, 10, 22, 15, 18, 18, 10, 18, 0, 15, -10, 10, -15, -10, -15, -15, -10)
+width = 2.0
+default_color = Color(0.4, 0.2, 0.05, 1)
+closed = true
+
+[node name="Neck" type="Polygon2D" parent="."]
+position = Vector2(0, -15)
+color = Color(0.5, 0.25, 0.08, 1)
+polygon = PackedVector2Array(-4, 0, -4, -18, 4, -18, 4, 0)
+
+[node name="NeckOutline" type="Line2D" parent="Neck"]
+points = PackedVector2Array(-4, 0, -4, -18, 4, -18, 4, 0)
+width = 1.5
+default_color = Color(0.3, 0.15, 0.04, 1)
+
+[node name="Headstock" type="Polygon2D" parent="."]
+position = Vector2(0, -33)
+color = Color(0.5, 0.25, 0.08, 1)
+polygon = PackedVector2Array(-6, 0, -6, -8, 6, -8, 6, 0)
+
+[node name="HeadstockOutline" type="Line2D" parent="Headstock"]
+points = PackedVector2Array(-6, 0, -6, -8, 6, -8, 6, 0)
+width = 1.5
+default_color = Color(0.3, 0.15, 0.04, 1)
+
+[node name="SoundHole" type="Polygon2D" parent="."]
+position = Vector2(0, 5)
+color = Color(0.1, 0.05, 0.02, 1)
+polygon = PackedVector2Array(-6, -6, -4, -7, 4, -7, 6, -6, 6, 6, 4, 7, -4, 7, -6, 6)
+
+[node name="Strings" type="Node2D" parent="."]
+
+[node name="String1" type="Line2D" parent="Strings"]
+points = PackedVector2Array(-5, -33, -5, 18)
+width = 1.5
+default_color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="String2" type="Line2D" parent="Strings"]
+points = PackedVector2Array(-2.5, -33, -2.5, 18)
+width = 1.5
+default_color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="String3" type="Line2D" parent="Strings"]
+points = PackedVector2Array(0, -33, 0, 18)
+width = 1.5
+default_color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="String4" type="Line2D" parent="Strings"]
+points = PackedVector2Array(2.5, -33, 2.5, 18)
+width = 1.5
+default_color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="String5" type="Line2D" parent="Strings"]
+points = PackedVector2Array(5, -33, 5, 18)
+width = 1.5
+default_color = Color(0.95, 0.95, 0.85, 1)
+
+[node name="Bridge" type="Polygon2D" parent="."]
+position = Vector2(0, 18)
+color = Color(0.3, 0.15, 0.05, 1)
+polygon = PackedVector2Array(-12, 0, -12, 4, 12, 4, 12, 0)
+
+[node name="Tuners" type="Node2D" parent="."]
+position = Vector2(0, -41)
+
+[node name="Tuner1" type="Polygon2D" parent="Tuners"]
+position = Vector2(-4, -2)
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+
+[node name="Tuner2" type="Polygon2D" parent="Tuners"]
+position = Vector2(4, -2)
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+
+[node name="Tuner3" type="Polygon2D" parent="Tuners"]
+position = Vector2(-4, 2)
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+
+[node name="Tuner4" type="Polygon2D" parent="Tuners"]
+position = Vector2(4, 2)
+color = Color(0.7, 0.7, 0.7, 1)
+polygon = PackedVector2Array(-2, -2, 2, -2, 2, 2, -2, 2)
+
+[node name="Frets" type="Node2D" parent="."]
+
+[node name="Fret1" type="Line2D" parent="Frets"]
+points = PackedVector2Array(-4, -28, 4, -28)
+width = 1.0
+default_color = Color(0.8, 0.8, 0.8, 0.8)
+
+[node name="Fret2" type="Line2D" parent="Frets"]
+points = PackedVector2Array(-4, -23, 4, -23)
+width = 1.0
+default_color = Color(0.8, 0.8, 0.8, 0.8)
+
+[node name="Fret3" type="Line2D" parent="Frets"]
+points = PackedVector2Array(-4, -18, 4, -18)
+width = 1.0
+default_color = Color(0.8, 0.8, 0.8, 0.8)
+
+[node name="HighlightLine" type="Line2D" parent="."]
+points = PackedVector2Array(-12, -5, -10, -8)
+width = 1.5
+default_color = Color(0.8, 0.5, 0.2, 0.6)
+
+[node name="AttackParticles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 15
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+randomness = 0.3
+direction = Vector2(0, -1)
+spread = 45.0
+gravity = Vector2(0, 100)
+initial_velocity_min = 80.0
+initial_velocity_max = 150.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(1, 0.8, 0.3, 1)

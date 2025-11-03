@@ -12,6 +12,7 @@ var attack_timer := 0.0
 @onready var ray_left := $RayLeft
 @onready var ray_right := $RayRight
 @onready var detection_area := $DetectionArea
+@onready var health_bar := $HealthBarContainer/HealthBar
 @onready var silence_projectile_scene := preload("res://scenes/silence_projectile.tscn")
 
 var player_target = null
@@ -74,6 +75,10 @@ func shoot_silence_projectile():
 
 func take_damage(amount: float):
 	health -= amount
+
+	# Update health bar
+	if health_bar:
+		health_bar.value = health
 
 	# Enhanced hurt animation
 	var tween = create_tween()

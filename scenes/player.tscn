@@ -1,11 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://c5yv8nxq7vmn2"]
+[gd_scene load_steps=15 format=3 uid="uid://c5yv8nxq7vmn2"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/sound_effects.gd" id="2"]
-[ext_resource type="PackedScene" uid="uid://bxk4m7p2qw9v8" path="res://scenes/guitar_sprite.tscn" id="3"]
+[ext_resource type="Script" uid="uid://ctqbh8gmp0qio" path="res://scripts/player.gd" id="1"]
+[ext_resource type="Script" uid="uid://dtveo64btvtbd" path="res://scripts/sound_effects.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://bxk4m7p2qxav8" path="res://scenes/guitar_sprite.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://g1u2i3t4a5r6" path="res://scenes/guitar_visual.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://dmasc4dphsknf" path="res://assets/sprites/Hero_001_Idle.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/sprites/Hero_001_Walk.png" id="5"]
-[ext_resource type="Texture2D" path="res://assets/sprites/Hero_001_Jump.png" id="6"]
+[ext_resource type="Texture2D" uid="uid://c3yuy6hx4417g" path="res://assets/sprites/Hero_001_Walk.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cffsssglgyveh" path="res://assets/sprites/Hero_001_Jump.png" id="6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
 atlas = ExtResource("4")
@@ -15,6 +16,10 @@ region = Rect2(0, 0, 32, 32)
 atlas = ExtResource("4")
 region = Rect2(32, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_jump_0"]
+atlas = ExtResource("6")
+region = Rect2(0, 0, 32, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_walk_0"]
 atlas = ExtResource("5")
 region = Rect2(0, 0, 32, 32)
@@ -22,10 +27,6 @@ region = Rect2(0, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="AtlasTexture_walk_1"]
 atlas = ExtResource("5")
 region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jump_0"]
-atlas = ExtResource("6")
-region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1"]
 animations = [{
@@ -60,22 +61,24 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
-size = Vector2(20, 30)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tuyoq"]
+radius = 14.5
+height = 38.0
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
-collision_layer = 1
-collision_mask = 1
+z_index = 10
 script = ExtResource("1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(3.8146973e-06, 3.8146973e-06)
+scale = Vector2(2.0625, 2.0625)
 sprite_frames = SubResource("SpriteFrames_1")
 animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 1)
-shape = SubResource("RectangleShape2D_1")
+position = Vector2(-1.5, 15)
+shape = SubResource("CapsuleShape2D_tuyoq")
 
 [node name="Guitar" parent="." instance=ExtResource("3")]
 visible = false
@@ -84,14 +87,12 @@ rotation = -0.349066
 scale = Vector2(0.6, 0.6)
 
 [node name="GuitarParticles" type="CPUParticles2D" parent="."]
-position = Vector2(0, 0)
 emitting = false
 amount = 20
 lifetime = 0.8
 speed_scale = 1.5
 explosiveness = 0.5
 direction = Vector2(0, -1)
-spread = 45.0
 gravity = Vector2(0, -50)
 initial_velocity_min = 100.0
 initial_velocity_max = 200.0
@@ -103,9 +104,12 @@ color = Color(1, 1, 0.5, 1)
 script = ExtResource("2")
 
 [node name="ProjectileSpawnPoint" type="Marker2D" parent="."]
-position = Vector2(0, 0)
+
+[node name="GuitarVisual" parent="." instance=ExtResource("7")]
+visible = false
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(3, 3)
+zoom = Vector2(2.1, 2.1)
+limit_bottom = 880
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0

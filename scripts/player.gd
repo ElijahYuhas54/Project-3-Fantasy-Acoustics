@@ -8,10 +8,9 @@ var gravity := 980.0
 # Health system
 var health := 100.0
 var max_health := 100.0
-
 # Combat stats
-var base_damage := 15.0  # Base damage for sound waves
-var powerful_damage_multiplier := 2.5  # Restoration spell multiplier
+var base_damage := 15.0
+var powerful_damage_multiplier := 2.5
 
 # Guitar mechanic
 var guitar_active := false
@@ -20,10 +19,11 @@ var current_melody := []
 var melody_buffer_time := 0.0
 var max_melody_buffer := 2.0
 
-# Sound restoration power (renamed from sound_power to energy)
-var energy := 0.0
-var max_energy := 100.0
-var energy_regen := 5.0  # Energy per second
+# Sequence system for beam attack
+var required_sequence := []
+var input_sequence := []
+var beam_ready := false
+var sequence_length := 4
 
 # Animation state
 var facing_right := true
@@ -34,36 +34,34 @@ var is_dead := false
 @onready var sprite := $AnimatedSprite2D
 @onready var guitar_particles := $GuitarParticles
 @onready var projectile_spawn := $ProjectileSpawnPoint
+@onready var guitar_visual := $GuitarVisual
 @onready var sound_wave_scene := preload("res://scenes/sound_wave.tscn")
 
 func _ready():
+	add_to_group("player")
 	guitar_particles.emitting = false
 	sprite.play("idle")
+	generate_new_sequence()
 
 func _physics_process(delta):
 	if is_dead:
 		return
 
-	# Regenerate energy over time
-	energy = min(energy + energy_regen * delta, max_energy)
-
-	# Handle gravity
+	# Gravity
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
-	# Handle jump
+	# Jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
 		$SoundEffects.play_jump()
 
-	# Handle horizontal movement
+	# Movement
 	var direction := Input.get_axis("move_left", "move_right")
-
 	if direction != 0:
 		velocity.x = direction * speed
 		facing_right = direction > 0
 		sprite.flip_h = not facing_right
-
 		if is_on_floor() and not is_playing_guitar:
 			if sprite.animation != "walk":
 				sprite.play("walk")
@@ -73,21 +71,17 @@ func _physics_process(delta):
 			if sprite.animation != "idle":
 				sprite.play("idle")
 
-	# Play jump animation when in air
+	# Jump animation
 	if not is_on_floor() and not is_playing_guitar:
 		if sprite.animation != "jump":
 			sprite.play("jump")
 
-	# Handle guitar playing
+	# Guitar input
 	handle_guitar_input(delta)
-
 	move_and_slide()
-
-	# Update UI
 	update_hud()
 
 func handle_guitar_input(delta):
-	# Check for individual note inputs
 	if Input.is_action_just_pressed("guitar_note_1"):
 		play_note(1)
 	elif Input.is_action_just_pressed("guitar_note_2"):
@@ -97,11 +91,12 @@ func handle_guitar_input(delta):
 	elif Input.is_action_just_pressed("guitar_note_4"):
 		play_note(4)
 
-	# Play complete melody
-	if Input.is_action_just_pressed("play_melody") and energy >= 20.0:
-		play_restoration_melody()
+	if Input.is_action_just_pressed("play_melody"):
+		if beam_ready:
+			fire_beam_attack()
+		else:
+			show_feedback("Match the sequence first!", Color(1, 0.5, 0.3))
 
-	# Melody buffer timeout
 	if melody_buffer_time > 0:
 		melody_buffer_time -= delta
 		if melody_buffer_time <= 0:
@@ -109,82 +104,114 @@ func handle_guitar_input(delta):
 
 func play_note(note_number: int):
 	is_playing_guitar = true
+	input_sequence.append(note_number)
 
-	# Add note to current melody
-	current_melody.append(note_number)
-	melody_buffer_time = max_melody_buffer
+	if guitar_visual:
+		guitar_visual.visible = true
+		guitar_visual.position = Vector2(20 if facing_right else -20, 0)
+		guitar_visual.scale = Vector2(0.6 if facing_right else -0.6, 0.6)
+		var attack_particles = guitar_visual.get_node_or_null("AttackParticles")
+		if attack_particles:
+			attack_particles.restart()
 
-	# Visual feedback
 	guitar_particles.emitting = true
-	spawn_sound_wave(note_number)
-
-	# Play sound
+	spawn_sound_wave(note_number)  # ✅ Pass note number to projectile
 	$SoundEffects.play_guitar_note(note_number)
+	check_sequence_match()
 
-	# Check if melody matches any pattern
-	check_melody_patterns()
-
-	# Reset after brief delay
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.3).timeout
 	is_playing_guitar = false
 	guitar_particles.emitting = false
+	if guitar_visual:
+		guitar_visual.visible = false
 
 func spawn_sound_wave(note_number: int):
 	var wave = sound_wave_scene.instantiate()
 	get_parent().add_child(wave)
-	# Spawn from projectile spawn point (center of character)
 	wave.global_position = projectile_spawn.global_position
 	wave.direction = 1 if facing_right else -1
-	wave.note_type = note_number
-	wave.damage = base_damage  # Apply player's damage stat
+	wave.note_type = note_number  # ✅ Correct texture based on note
+	wave.damage = base_damage
 
-func check_melody_patterns():
-	# Check for restoration melody: 1-2-3-4
-	if current_melody.size() == 4:
-		if current_melody == [1, 2, 3, 4]:
-			gain_energy(10.0)
-			show_feedback("Perfect Melody! +10 Energy", Color(0.5, 1, 0.5))
-		elif current_melody == [4, 3, 2, 1]:
-			gain_energy(15.0)
-			show_feedback("Harmonic Reversal! +15 Energy", Color(0.5, 1, 1))
-		elif current_melody == [1, 3, 2, 4]:
-			gain_energy(8.0)
-			show_feedback("Nice Rhythm! +8 Energy", Color(0.8, 1, 0.5))
-		else:
-			show_feedback("Keep trying...", Color(0.7, 0.7, 0.7))
+func check_sequence_match():
+	if input_sequence.size() > required_sequence.size():
+		input_sequence.clear()
+		show_feedback("Wrong! Try again...", Color(1, 0.3, 0.3))
+		return
 
-		current_melody.clear()
+	for i in range(input_sequence.size()):
+		if input_sequence[i] != required_sequence[i]:
+			input_sequence.clear()
+			show_feedback("Wrong note! Try again...", Color(1, 0.3, 0.3))
+			return
 
-func play_restoration_melody():
-	energy -= 20.0
+	if input_sequence.size() == required_sequence.size():
+		beam_ready = true
+		show_feedback("SEQUENCE MATCHED! Press E to unleash!", Color(0.5, 1, 0.5))
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate", Color(1.5, 1.5, 2.0), 0.2)
+		tween.tween_property(sprite, "modulate", Color(1, 1, 1), 0.2)
 
-	# Visual and audio feedback
-	show_feedback("RESTORATION SPELL!", Color(1, 1, 0.5))
+func fire_beam_attack():
+	beam_ready = false
+	input_sequence.clear()
+	generate_new_sequence()
+	show_feedback("SONG BEAM!", Color(1, 1, 0.5))
+
+	if guitar_visual:
+		guitar_visual.visible = true
+		guitar_visual.scale = Vector2(0.6, 0.6)
+
+		# Create orbital motion around the player
+		var orbit_radius = 40.0
+		var spin_tween = create_tween()
+		spin_tween.set_parallel(true)
+
+		# Rotate the guitar itself
+		spin_tween.tween_property(guitar_visual, "rotation", TAU * 3, 2.0)
+
+		# Animate position in a circle (8 points around the player)
+		var orbit_tween = create_tween()
+		for i in range(9):  # 9 points to complete the circle (0 to 2*PI)
+			var angle = (TAU / 8.0) * i
+			var orbit_pos = Vector2(cos(angle), sin(angle)) * orbit_radius
+			if i == 0:
+				guitar_visual.position = orbit_pos
+			else:
+				orbit_tween.tween_property(guitar_visual, "position", orbit_pos, 2.0 / 8.0)
+
 	guitar_particles.emitting = true
-	guitar_particles.amount = 50
+	guitar_particles.amount = 100
 	guitar_particles.explosiveness = 1.0
+	guitar_particles.lifetime = 1.5
 
-	# Spawn powerful sound waves in all directions
-	for i in range(8):
-		await get_tree().create_timer(0.1).timeout
+	var beam_duration = 2.0
+	var note_interval = 0.1
+	var elapsed = 0.0
+	while elapsed < beam_duration:
 		var wave = sound_wave_scene.instantiate()
 		get_parent().add_child(wave)
-		var angle = i * PI / 4.0
-		# Spawn from center of character
 		wave.global_position = projectile_spawn.global_position
-		wave.direction = Vector2(cos(angle), sin(angle))
+		wave.direction = 1 if facing_right else -1
 		wave.is_powerful = true
-		wave.damage = base_damage * powerful_damage_multiplier  # Powerful damage
+		wave.note_type = randi() % 4 + 1
+		wave.damage = base_damage * powerful_damage_multiplier
 		wave.speed = 500.0
+		wave.lifetime = 3.0
+		elapsed += note_interval
+		await get_tree().create_timer(note_interval).timeout
 
-	# Restore nearby silenced areas
 	restore_nearby_areas()
-
-	# Reset particles
 	await get_tree().create_timer(0.5).timeout
 	guitar_particles.amount = 20
 	guitar_particles.explosiveness = 0.5
+	guitar_particles.lifetime = 1.0
 	guitar_particles.emitting = false
+	if guitar_visual:
+		guitar_visual.visible = false
+		guitar_visual.rotation = 0
+		guitar_visual.position = Vector2.ZERO
+		guitar_visual.scale = Vector2(0.6, 0.6)
 
 func restore_nearby_areas():
 	var areas = get_tree().get_nodes_in_group("silenced_area")
@@ -192,13 +219,10 @@ func restore_nearby_areas():
 		if global_position.distance_to(area.global_position) < 400:
 			area.restore_sound()
 
-func gain_energy(amount: float):
-	energy = min(energy + amount, max_energy)
-
-	# Visual feedback
-	var tween = create_tween()
-	tween.tween_property(sprite, "modulate", Color(1.5, 1.5, 2.0), 0.2)
-	tween.tween_property(sprite, "modulate", Color(1, 1, 1), 0.2)
+func generate_new_sequence():
+	required_sequence.clear()
+	for i in range(sequence_length):
+		required_sequence.append(randi() % 4 + 1)
 
 func show_feedback(text: String, color: Color = Color(1, 1, 0.5)):
 	var label = get_node_or_null("../UI/FeedbackLabel")
@@ -210,30 +234,30 @@ func show_feedback(text: String, color: Color = Color(1, 1, 0.5)):
 		tween.tween_property(label, "modulate:a", 0.0, 2.0)
 
 func update_hud():
-	# Update health bar
-	var health_bar = get_node_or_null("../UI/ControlPanel/VBoxContainer/HealthBar")
+	var health_bar = get_node_or_null("../UI/HUD/HealthPanel/VBoxContainer/HealthBar")
 	if health_bar:
 		health_bar.value = health
 
-	# Update energy bar
-	var energy_bar = get_node_or_null("../UI/ControlPanel/VBoxContainer/EnergyBar")
-	if energy_bar:
-		energy_bar.value = energy
+	var sequence_display = get_node_or_null("../UI/HUD/HealthPanel/VBoxContainer/SequenceDisplay")
+	if sequence_display:
+		var display_text = ""
+		for i in range(required_sequence.size()):
+			if i < input_sequence.size():
+				display_text += "[color=#5f5]%d[/color] " % required_sequence[i]
+			else:
+				display_text += "%d " % required_sequence[i]
+		sequence_display.text = display_text.strip_edges()
+		sequence_display.set("bbcode_enabled", true)
 
 func take_damage(amount: float):
 	if is_dead:
 		return
-
 	health -= amount
 	health = max(health, 0)
-
-	# Visual feedback
-	show_feedback("-%.0f HP!" % amount, Color(1, 0.3, 0.3))
+	show_feedback("-%d HP!" % amount, Color(1, 0.3, 0.3))
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate", Color(2, 0.5, 0.5), 0.1)
 	tween.tween_property(sprite, "modulate", Color(1, 1, 1), 0.1)
-
-	# Check for death
 	if health <= 0:
 		die()
 
@@ -242,12 +266,8 @@ func die():
 	show_feedback("DEFEATED!", Color(1, 0, 0))
 	sprite.play("idle")
 	velocity = Vector2.ZERO
-
-	# Fade out
 	var tween = create_tween()
 	tween.tween_property(sprite, "modulate:a", 0.0, 2.0)
 	await tween.finished
-
-	# Restart scene after delay
 	await get_tree().create_timer(1.0).timeout
 	get_tree().reload_current_scene()

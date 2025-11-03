@@ -1,27 +1,34 @@
 extends Area2D
 
 var speed := 400.0
-var direction = 1.0  # Can be float or Vector2
+var direction = 1.0
 var lifetime := 3.0
 var note_type := 1
 var is_powerful := false
-var damage := 15.0  # Will be set by player
+var damage := 15.0
 
 @onready var sprite := $Sprite2D
 @onready var particles := $CPUParticles2D
 @onready var collision := $CollisionShape2D
 
-func _ready():
-	# Set visual properties based on note type
-	var colors := {
-		1: Color(1.0, 0.3, 0.3),  # Red
-		2: Color(0.3, 1.0, 0.3),  # Green
-		3: Color(0.3, 0.3, 1.0),  # Blue
-		4: Color(1.0, 1.0, 0.3)   # Yellow
-	}
+var note_textures := {
+	1: preload("res://assets/sprites/song_1.png"),
+	2: preload("res://assets/sprites/song_2.png"),
+	3: preload("res://assets/sprites/song_3.png"),
+	4: preload("res://assets/sprites/song_4.png")
+}
 
+func _ready():
+	if sprite and note_type in note_textures:
+		sprite.texture = note_textures[note_type]
+
+	var colors := {
+		1: Color(1.0, 0.3, 0.3),
+		2: Color(0.3, 1.0, 0.3),
+		3: Color(0.3, 0.3, 1.0),
+		4: Color(1.0, 1.0, 0.3)
+	}
 	var color = colors.get(note_type, Color.WHITE)
-	sprite.modulate = color
 
 	if particles:
 		particles.color = color
@@ -29,13 +36,10 @@ func _ready():
 
 	if is_powerful:
 		scale = Vector2(2.0, 2.0)
-		sprite.modulate = Color(2.0, 2.0, 3.0)
 
-	# Connect signals
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
 
-	# Self-destruct after lifetime
 	await get_tree().create_timer(lifetime).timeout
 	queue_free()
 
@@ -43,13 +47,10 @@ var process_time := 0.0
 
 func _process(delta):
 	process_time += delta
-
-	# Fade out over time
 	if lifetime > 0:
 		modulate.a = 1.0 - (process_time / lifetime)
 
 func _physics_process(delta):
-	# Handle both Vector2 and float direction
 	if direction is Vector2:
 		position += direction * speed * delta
 	else:
@@ -66,7 +67,6 @@ func _on_area_entered(area):
 		area.restore_sound()
 		create_impact_effect()
 	elif area.is_in_group("silence_projectile"):
-		# Sound waves cancel silence projectiles
 		area.queue_free()
 		create_impact_effect()
 		queue_free()

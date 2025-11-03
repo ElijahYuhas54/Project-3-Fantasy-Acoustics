@@ -1,43 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://cfj8k3p4vxr9t"]
+[gd_scene load_steps=6 format=3 uid="uid://cfj8k3p4vxsat"]
 
-[ext_resource type="Script" path="res://scripts/parallax_bg.gd" id="1"]
+[ext_resource type="Script" uid="uid://xwsv3x81i4ue" path="res://scripts/parallax_bg.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://c5yv8nxq7vmn2" path="res://scenes/player.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://drxm4k7p5qw8v" path="res://scenes/silence_enemy.tscn" id="3"]
-[ext_resource type="PackedScene" uid="uid://b8y4m5xz6nqw1" path="res://scenes/silenced_area.tscn" id="4"]
-
-[sub_resource type="Gradient" id="Gradient_sky"]
-offsets = PackedFloat32Array(0, 0.5, 1)
-colors = PackedColorArray(0.1, 0.05, 0.2, 1, 0.2, 0.1, 0.3, 1, 0.3, 0.2, 0.4, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_sky"]
-gradient = SubResource("Gradient_sky")
-width = 2048
-height = 1024
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health"]
-bg_color = Color(0.8, 0.2, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_energy"]
-bg_color = Color(0.3, 0.6, 1, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1"]
-texture_region_size = Vector2i(64, 64)
-
-[sub_resource type="TileSet" id="TileSet_1"]
-tile_size = Vector2i(64, 64)
-sources/0 = SubResource("TileSetAtlasSource_1")
+[ext_resource type="PackedScene" uid="uid://b8y4m5x06nqw1" path="res://scenes/silenced_area.tscn" id="4"]
+[ext_resource type="Script" uid="uid://b8fx64e5cyhcr" path="res://scripts/game_manager.gd" id="5"]
 
 [node name="Main" type="Node2D"]
+script = ExtResource("5")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 script = ExtResource("1")
@@ -58,8 +28,6 @@ emission_rect_extents = Vector2(1000, 500)
 direction = Vector2(0, 0)
 spread = 0.0
 gravity = Vector2(0, 0)
-initial_velocity_min = 0.0
-initial_velocity_max = 0.0
 scale_amount_min = 2.0
 scale_amount_max = 5.0
 color = Color(1, 1, 0.8, 0.6)
@@ -89,6 +57,7 @@ motion_scale = Vector2(0.6, 0.6)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Trees" type="Node2D" parent="ParallaxBackground/ParallaxLayer3"]
+position = Vector2(-8, 98)
 
 [node name="Tree1" type="Node2D" parent="ParallaxBackground/ParallaxLayer3/Trees"]
 position = Vector2(200, 700)
@@ -132,7 +101,6 @@ speed_scale = 0.3
 randomness = 0.5
 emission_shape = 3
 emission_rect_extents = Vector2(1000, 100)
-direction = Vector2(1, 0)
 spread = 20.0
 gravity = Vector2(0, -10)
 initial_velocity_min = 10.0
@@ -144,13 +112,14 @@ color = Color(0.3, 0.25, 0.4, 0.3)
 [node name="Level" type="Node2D" parent="."]
 
 [node name="Ground" type="StaticBody2D" parent="Level"]
-collision_layer = 1
 collision_mask = 0
 
 [node name="CollisionPolygon1" type="CollisionPolygon2D" parent="Level/Ground"]
 polygon = PackedVector2Array(-500, 800, 2500, 800, 2500, 900, -500, 900)
 
 [node name="Platform1" type="Polygon2D" parent="Level/Ground"]
+position = Vector2(0, -1472.001)
+scale = Vector2(1, 2.840001)
 color = Color(0.25, 0.2, 0.3, 1)
 polygon = PackedVector2Array(-500, 800, 2500, 800, 2500, 900, -500, 900)
 
@@ -190,7 +159,7 @@ color = Color(0.25, 0.2, 0.3, 1)
 polygon = PackedVector2Array(-100, 580, 200, 580, 200, 630, -100, 630)
 
 [node name="Ruins" type="Node2D" parent="Level"]
-position = Vector2(1600, 700)
+position = Vector2(1604, 805)
 
 [node name="Pillar1" type="Polygon2D" parent="Level/Ruins"]
 color = Color(0.3, 0.3, 0.35, 1)
@@ -202,7 +171,9 @@ color = Color(0.28, 0.28, 0.33, 1)
 polygon = PackedVector2Array(-30, 0, -25, -120, 25, -120, 30, 0)
 
 [node name="BrokenArch" type="Polygon2D" parent="Level/Ruins"]
-position = Vector2(75, -150)
+position = Vector2(78, -128)
+rotation = 0.18984364
+scale = Vector2(0.975, 1.0666667)
 color = Color(0.32, 0.32, 0.37, 1)
 polygon = PackedVector2Array(-80, 0, -70, -30, 70, -30, 80, 0)
 
@@ -210,16 +181,16 @@ polygon = PackedVector2Array(-80, 0, -70, -30, 70, -30, 80, 0)
 position = Vector2(200, 700)
 
 [node name="Enemy1" parent="." instance=ExtResource("3")]
-position = Vector2(900, 670)
+position = Vector2(750, 664)
 
 [node name="Enemy2" parent="." instance=ExtResource("3")]
-position = Vector2(1300, 560)
+position = Vector2(1147, 549)
 
 [node name="SilencedArea1" parent="." instance=ExtResource("4")]
-position = Vector2(750, 600)
+position = Vector2(853, 650)
 
 [node name="SilencedArea2" parent="." instance=ExtResource("4")]
-position = Vector2(1150, 480)
+position = Vector2(1245, 541)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -234,14 +205,14 @@ layout_mode = 0
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 270.0
-offset_bottom = 90.0
+offset_bottom = 107.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/HUD/HealthPanel"]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
 offset_right = 240.0
-offset_bottom = 60.0
+offset_bottom = 79.0
 
 [node name="HealthLabel" type="Label" parent="UI/HUD/HealthPanel/VBoxContainer"]
 layout_mode = 2
@@ -251,23 +222,25 @@ text = "Health"
 
 [node name="HealthBar" type="ProgressBar" parent="UI/HUD/HealthPanel/VBoxContainer"]
 layout_mode = 2
-max_value = 100.0
 value = 100.0
 show_percentage = false
 
-[node name="EnergyLabel" type="Label" parent="UI/HUD/HealthPanel/VBoxContainer"]
+[node name="SequenceLabel" type="Label" parent="UI/HUD/HealthPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.8, 1, 1)
 theme_override_font_sizes/font_size = 14
-text = "Energy"
+text = "Melody Sequence:"
 
-[node name="EnergyBar" type="ProgressBar" parent="UI/HUD/HealthPanel/VBoxContainer"]
+[node name="SequenceDisplay" type="RichTextLabel" parent="UI/HUD/HealthPanel/VBoxContainer"]
 layout_mode = 2
-max_value = 100.0
-show_percentage = false
+theme_override_colors/default_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+text = "? ? ? ?"
+fit_content = true
+scroll_active = false
 
 [node name="TitlePanel" type="Panel" parent="UI"]
-layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -304,11 +277,10 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.8, 0.9, 1)
 theme_override_font_sizes/font_size = 13
 text = "WASD: Move  |  Space: Jump  |  1-4: Play Notes
-E: Restoration Spell (costs 20 energy)"
+E: Song Beam (match the sequence first!)"
 horizontal_alignment = 1
 
 [node name="FeedbackLabel" type="Label" parent="UI"]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -322,7 +294,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 0.5, 1)
 theme_override_font_sizes/font_size = 32
-text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
